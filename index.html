@@ -3,53 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ausu Food Pantry Record</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Data Display</title>
   <style>
-    /* Paste your custom styles here */
-    .page-section {
-      padding: 50px 0;
+    .floating-widget {
+      position: fixed;
+      top: 20%;
+      right: 10px;
+      width: 150px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       text-align: center;
     }
-    .number {
-      font-size: 2rem;
+    .data-value {
+      font-size: 24px;
       font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="page-section">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <p>Fund spent this month</p>
-          <h2>$<span class="number" id="fundsSpent">0</span></h2>
-        </div>
-        <div class="col-md-4">
-          <p>Donations received this month</p>
-          <h2>$<span class="number" id="donationsReceived">0</span></h2>
-        </div>
-        <div class="col-md-4">
-          <p>People served</p>
-          <h2><span class="number" id="peopleServed">0</span> person</h2>
-        </div>
-      </div>
-    </div>
+  <div class="floating-widget">
+    <div>Data from F2:</div>
+    <div class="data-value" id="dataValue">Loading...</div>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', async function() {
+    async function fetchData() {
       try {
-        const response = await fetch('/api/ShowSustainability');
-        const data = await response.json();
-
-        document.getElementById('fundsSpent').textContent = data.fundsSpent;
-        document.getElementById('donationsReceived').textContent = data.donations;
-        document.getElementById('peopleServed').textContent = data.peopleServed;
+        const response = await fetch('/api/ShowSustainability', { method: 'POST' });
+        const result = await response.json();
+        
+        if (result.success) {
+          document.getElementById('dataValue').textContent = result.data;
+        } else {
+          document.getElementById('dataValue').textContent = 'Error fetching data';
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
+        document.getElementById('dataValue').textContent = 'Error fetching data';
       }
-    });
+    }
+
+    fetchData();
   </script>
 </body>
 </html>
