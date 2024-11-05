@@ -29,9 +29,12 @@
   </div>
 
   <script>
+    // Replace 'YOUR_SCRIPT_URL' with your actual Google Apps Script Web App URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxOkXF_z2BmQn2S_CfV-5iaWXyJXeCEbLOCFI5rlAzIXSD5t2j5bz2pgDPO-FXlBZFo/exec';
+
     async function fetchData() {
       try {
-        const response = await fetch('/api/ShowSustainability', { method: 'POST' });
+        const response = await fetch(scriptURL);
         const result = await response.json();
         
         if (result.success) {
@@ -45,7 +48,8 @@
       }
     }
 
-    fetchData();
+    // Call fetchData when the page loads
+    window.onload = fetchData;
   </script>
 </body>
 </html>
