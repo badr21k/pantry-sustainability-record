@@ -1,118 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sustainability Counter</title>
-  <style>
-    /* General styling */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    /* Widget styling */
-    .floating-widget {
-      position: relative;
-      width: 200px;
-      background-color: #e0f7f1;
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0, 128, 128, 0.3);
-    }
-
-    /* Loader animation */
-    .loader {
-      border: 4px solid #e0f7f1;
-      border-top: 4px solid #28a745;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Icon and text styling */
-    .logo {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin: 0 auto 10px;
-    }
-
-    .data-label {
-      font-size: 16px;
-      color: #333;
-      font-weight: bold;
-    }
-
-    .data-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: #28a745;
-    }
-
-    .footer-text {
-      font-size: 14px;
-      color: #555;
-      margin-top: 15px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plastic Waste Counter</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f8f4;
+        }
+        .counter-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 250px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #e6f4ec;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+        }
+        .counter-widget img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+        .counter-text {
+            font-size: 18px;
+            color: #2f855a;
+            font-weight: bold;
+        }
+        .subtext {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+        }
+        .loading {
+            font-size: 16px;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
+    <div class="counter-widget">
+        <img src="https://64.media.tumblr.com/8b08c65b654a0300f0c5356e19114836/c89a02b0442ff6fe-27/s500x750/3fb6b4a1d30a2e0e9d4d075de2fb69da903fa23c.pnj" alt="Logo">
+        <div class="counter-text" id="counter">Loading...</div>
+        <div class="subtext">Plastic Waste Saved</div>
+    </div>
 
-  <div class="floating-widget" id="widget">
-    <!-- Logo -->
-    <img src="https://64.media.tumblr.com/8b08c65b654a0300f0c5356e19114836/c89a02b0442ff6fe-27/s500x750/3fb6b4a1d30a2e0e9d4d075de2fb69da903fa23c.pnj" alt="AUSU Logo" class="logo">
-
-    <!-- Loader initially, replaced by data when fetched -->
-    <div class="loader" id="loader"></div>
-    <div class="data-label" id="dataLabel" style="display: none;">Plastic Waste Saved:</div>
-    <div class="data-value" id="dataValue" style="display: none;">0</div>
-
-    <!-- Footer text -->
-    <div class="footer-text">Promoting Sustainability</div>
-  </div>
-
-  <script>
-    // Google Apps Script Web App URL
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxOkXF_z2BmQn2S_CfV-5iaWXyJXeCEbLOCFI5rlAzIXSD5t2j5bz2pgDPO-FXlBZFo/exec';
-
-    // Function to fetch data from Google Apps Script
-    async function fetchData() {
-      try {
-        const response = await fetch(scriptURL);
-        const result = await response.json();
-
-        // Check if data was fetched successfully
-        if (result.success) {
-          document.getElementById('dataValue').textContent = result.data + ' Plastic bags and containers';
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('dataLabel').style.display = 'block';
-          document.getElementById('dataValue').style.display = 'block';
-        } else {
-          document.getElementById('dataValue').textContent = 'Error fetching data';
+    <script>
+        async function fetchData() {
+            const apiUrl = 'https://script.google.com/macros/s/AKfycbxOkXF_z2BmQn2S_CfV-5iaWXyJXeCEbLOCFI5rlAzIXSD5t2j5bz2pgDPO-FXlBZFo/exec';
+            try {
+                const response = await fetch(apiUrl, { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('counter').textContent = `${result.data} Plastic bags and containers`;
+                } else {
+                    document.getElementById('counter').textContent = 'Error fetching data';
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                document.getElementById('counter').textContent = 'Error fetching data';
+            }
         }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        document.getElementById('dataValue').textContent = 'Error fetching data';
-      }
-    }
 
-    // Call fetchData when the page loads
-    window.onload = fetchData;
-  </script>
-
+        // Run fetch on page load
+        window.onload = fetchData;
+    </script>
 </body>
 </html>
