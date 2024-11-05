@@ -1,12 +1,78 @@
-function doGet() {
-    try {
-        const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Overall Record');
-        const cellValue = sheet.getRange('F2').getValue();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plastic Waste Counter</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f8f4;
+        }
+        .counter-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 250px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #e6f4ec;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+        }
+        .counter-widget img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+        .counter-text {
+            font-size: 18px;
+            color: #2f855a;
+            font-weight: bold;
+        }
+        .subtext {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+        }
+        .loading {
+            font-size: 16px;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="counter-widget">
+        <img src="https://64.media.tumblr.com/8b08c65b654a0300f0c5356e19114836/c89a02b0442ff6fe-27/s500x750/3fb6b4a1d30a2e0e9d4d075de2fb69da903fa23c.pnj" alt="Logo">
+        <div class="counter-text" id="counter">Loading...</div>
+        <div class="subtext">Plastic Waste Saved</div>
+    </div>
 
-        const response = { success: true, data: cellValue };
-        return ContentService.createTextOutput(JSON.stringify(response)).setMimeType(ContentService.MimeType.JSON);
-    } catch (err) {
-        const errorResponse = { success: false, error: err.toString() };
-        return ContentService.createTextOutput(JSON.stringify(errorResponse)).setMimeType(ContentService.MimeType.JSON);
-    }
-}
+    <script>
+        async function fetchData() {
+            const apiUrl = 'https://script.google.com/macros/s/AKfycbxOkXF_z2BmQn2S_CfV-5iaWXyJXeCEbLOCFI5rlAzIXSD5t2j5bz2pgDPO-FXlBZFo/exec';
+            try {
+                const response = await fetch(apiUrl, { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('counter').textContent = `${result.data} Plastic bags and containers`;
+                } else {
+                    document.getElementById('counter').textContent = 'Error fetching data';
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                document.getElementById('counter').textContent = 'Error fetching data';
+            }
+        }
+
+        // Run fetch on page load
+        window.onload = fetchData;
+    </script>
+</body>
+</html>
