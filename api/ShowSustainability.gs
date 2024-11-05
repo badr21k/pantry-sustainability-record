@@ -1,7 +1,9 @@
+// ShowSustainability.js
+
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         try {
-            const response = await fetch('https://script.google.com/macros/s/AKfycbxy7MEP5oNKJ-1pDDhrXeJzOzjphZPPPD-l2kD-FN_D_MUPQB4W8HQ7JU3cWUY3MnRj7A/exec', {
+            const response = await fetch('https://script.google.com/macros/s/AKfycbx8ryKP9o3rMRt7ok1hPahwnAnb__1Dc-K_XbrHfmo9LFo0o6iWhms_zYKZ5s7OtrXB/exec', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
