@@ -55,28 +55,24 @@
     <div class="floating-widget">
       <div class="icon"><i class="play-icon"></i> <!--Play button--></div>
       <div class="icon">
-        <img src="https://64.media.tumblr.com/8b08c65b654a0300f0c5356e19114836/c89a02b0442ff6fe-27/s500x750/3fb6b4a1d30a2e0e9d4d075de2fb69da903fa23c.pnj" alt="Profile" class="profile"> <!--Profile icon-->
+        <img src="https://64.media.tumblr.com/8b08c65b654a0300f0c5356e19114836/c89a02b0442ff6fe-27/s500x750/3fb6b4a1d30a2e0e9d4d075de2fb69da903fa23c.pnj" alt="Profile" class="profile">
       </div>
-      <div class="icon"><span class="data-from-sheet"></span> <!--Data from F2--></div>
+      <div class="icon"><span class="data-from-sheet"></span></div>
       <div class="icon">
-        <span class="speed">Plastic waste</span> <!--Plastic waste text-->
+        <span class="speed">Plastic waste</span>
       </div>
     </div>
 
     <script>
-      // Your Google Sheets ID and API key
-      const sheetID = 'Yhttps://script.google.com/macros/s/AKfycbynVgSfiFNuM-P8bFOZnoMkKo5zaaZEeE35zzIhg8E57lpBWSHaX-R-TYS-Gh5mTtkP/exec'; // Replace with your actual spreadsheet ID
-      const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
-      const range = 'Overall Record!F2';
+      // API URL for Vercel endpoint
+      const apiUrl = '/api/ShowSustainability';
 
-      // Fetch the data from Google Sheets API
+      // Fetch the data from Vercel API endpoint
       async function fetchData() {
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${range}?key=${apiKey}`;
         try {
-          const response = await fetch(url);
+          const response = await fetch(apiUrl, { method: 'POST' });
           const data = await response.json();
-          const cellValue = data.values[0][0]; // Get the value from F2
-          document.querySelector('.data-from-sheet').textContent = cellValue;
+          document.querySelector('.data-from-sheet').textContent = data.data;
         } catch (error) {
           console.error('Error fetching data:', error);
         }
