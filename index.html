@@ -1,126 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sustainability Counter</title>
-  <style>
-    /* General styling */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-    }
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      .floating-widget {
+        position: fixed;
+        top: 20%;
+        right: 10px;
+        width: 3%;
+        border-radius: 30px;
+        border-color: #DA70D6;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
 
-    /* Widget styling */
-    .floating-widget {
-      position: fixed;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 160px;
-      background-color: #ffffff;
-      border: 1px solid #cce5df;
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-    }
+      .icon {
+        margin: 1px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-    .floating-widget:hover {
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-      transform: translateY(-50%) scale(1.05);
-    }
+      .icon img.profile {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+      }
 
-    /* Loader animation */
-    .loader {
-      border: 3px solid #e0f7f1;
-      border-top: 3px solid #28a745;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-      margin: 15px auto;
-    }
+      .icon span.speed {
+        font-size: 10px;
+        color: black;
+        padding: 6px 10px;
+        text-align: center;
+        width: 100%;
+        word-wrap: break-word;
+        font-family: 'Serif', sans-serif;
+        font-weight: 500;
+      }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+      .icon .data-from-sheet {
+        font-size: 16px;
+      }
 
-    /* Icon and text styling */
-    .logo {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin: 0 auto 10px;
-    }
+      .icon i {
+        font-size: 24px;
+        color: white;
+      }
 
-    .data-label {
-      font-size: 15px;
-      color: #333;
-      font-weight: 600;
-      margin-top: 10px;
-    }
+      /* Loader animation */
+      .loader {
+        border: 2px solid #f3f4f6;
+        border-top: 4px solid #28a745;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 0.8s linear infinite;
+        margin: 10px auto;
+        display: block;
+      }
 
-    .data-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: #28a745;
-      margin-top: 8px;
-    }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
 
-    .footer-text {
-      font-size: 13px;
-      color: #777;
-      margin-top: 12px;
-      font-style: italic;
-    }
-  </style>
-</head>
-<body>
+      /* Hidden elements initially */
+      #dataLabel, #dataValue {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="floating-widget">
+      <div class="icon"><i class="play-icon"></i></div>
+      <div class="icon">
+        <img src="https://64.media.tumblr.com/8b08c65b654a0300f0c5356e19114836/c89a02b0442ff6fe-27/s500x750/3fb6b4a1d30a2e0e9d4d075de2fb69da903fa23c.pnj" alt="Profile" class="profile">
+      </div>
+      <div class="loader" id="loader"></div>
+      <div class="data-label" id="dataLabel"></div>
+      <div class="data-value" style="color: #28a745;" id="dataValue"></div>
+      <div class="icon">
+        <span class="speed" style="color: #28a745;">Plastic Waste Saved</span>
+      </div>
+    </div>
 
-  <div class="floating-widget" id="widget">
-    <!-- Logo -->
-    <img src="https://64.media.tumblr.com/8b08c65b654a0300f0c5356e19114836/c89a02b0442ff6fe-27/s500x750/3fb6b4a1d30a2e0e9d4d075de2fb69da903fa23c.pnj" alt="AUSU Logo" class="logo">
+    <script>
+      // Google Apps Script Web App URL
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbxOkXF_z2BmQn2S_CfV-5iaWXyJXeCEbLOCFI5rlAzIXSD5t2j5bz2pgDPO-FXlBZFo/exec';
 
-    <!-- Loader initially, replaced by data when fetched -->
-    <div class="loader" id="loader"></div>
-    <div class="data-label" id="dataLabel" style="display: none;">Plastic Waste Saved:</div>
-    <div class="data-value" id="dataValue" style="display: none;">0</div>
+      // Function to fetch data from Google Apps Script
+      async function fetchData() {
+        // Show loader while fetching
+        document.getElementById('loader').style.display = 'block';
+        document.getElementById('dataLabel').style.display = 'none';
+        document.getElementById('dataValue').style.display = 'none';
 
-    <!-- Footer text -->
-    <div class="footer-text">Promoting Sustainability</div>
-  </div>
+        try {
+          const response = await fetch(scriptURL);
+          const result = await response.json();
 
-  <script>
-    // Google Apps Script Web App URL
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxOkXF_z2BmQn2S_CfV-5iaWXyJXeCEbLOCFI5rlAzIXSD5t2j5bz2pgDPO-FXlBZFo/exec';
-
-    // Function to fetch data from Google Apps Script
-    async function fetchData() {
-      try {
-        const response = await fetch(scriptURL);
-        const result = await response.json();
-
-        // Check if data was fetched successfully
-        if (result.success) {
-          document.getElementById('dataValue').textContent = result.data + ' items';
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('dataLabel').style.display = 'block';
-          document.getElementById('dataValue').style.display = 'block';
-        } else {
+          // Check if data was fetched successfully
+          if (result.success) {
+            document.getElementById('dataValue').textContent = result.data + '';
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('dataLabel').style.display = 'block';
+            document.getElementById('dataValue').style.display = 'block';
+          } else {
+            document.getElementById('dataValue').textContent = 'Error fetching data';
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
           document.getElementById('dataValue').textContent = 'Error fetching data';
         }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        document.getElementById('dataValue').textContent = 'Error fetching data';
       }
-    }
 
-    // Call fetchData when the page loads
-    window.onload = fetchData;
-  </script>
-
-</body>
+      // Call fetchData when the page loads
+      window.onload = fetchData;
+    </script>
+  </body>
 </html>
